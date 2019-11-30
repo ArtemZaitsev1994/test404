@@ -1,0 +1,20 @@
+
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"user_name": "test", "contact": {"name": "Artem", "messangers": {"telegram": "ArtemZaitsev", "whatsApp": "+799200828615", "viber": ""}}, "name": "Artem"}' \
+  http://localhost:8080/api/contacts
+
+
+
+
+
+
+curl --header "Content-Type: application/json" \
+  --request PUT \
+  --data '{"user_name": "test", "contacts": ["Artem"], "message": "Hello", "time": null}' \
+  http://localhost:8080/api/contacts
+
+ curl --header "Content-Type: application/json" \
+  --request GET \
+  --data '{"user_name": "test"}' \
+  http://localhost:8080/api/get_failed_mess
