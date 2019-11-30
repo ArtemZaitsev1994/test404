@@ -113,7 +113,37 @@ curl --header "Content-Type: application/json" --request GET --data '{"user_name
 }
 ```
 * `user_name` - Имя, под которым выполняется запрос.
+#### Response
+```
+{
+  'contacts': {
+    name: {
+      'telegram': str,
+      'whatsApp': str,
+      'viber': str,
+    },
+  }
+}
+```
+* `contacts` - словарь контактов, ключами в котором являются имена контактов.
+* `contacts[name].telegram` - идентификатор в Telegram.
+* `contacts[name].whatsApp` - идентификатор в WhatsApp.
+* `contacts[name].viber` - идентификатор в Viber.
 
+### Получить недоставленные сообщения:
+#### Curl пример
+```
+curl --header "Content-Type: application/json" --request GET --data '{"user_name": "test"}' http://localhost:8080/api/get_failed_mess
+```
+#### URL
+`http://localhost:8080/api/get_failed_mess`
+#### JSON request data
+```
+{
+  'user_name': str,
+}
+```
+* `user_name` - Имя, под которым выполняется запрос.
 #### Response
 ```
 {
