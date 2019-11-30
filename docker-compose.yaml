@@ -15,6 +15,7 @@ services:
 
       messengers_server:
         build: ./messengers/
+        command: python -u server.py
         container_name: "messengers"
         ports:
           - 8081:8081
