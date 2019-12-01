@@ -11,7 +11,7 @@ class User:
         self.collection = self.db[COLLECTION]
         self.name = name
 
-    async def check_user(self, **kw) -> Dict[str, Any]:
+    async def check_user(self) -> Dict[str, Any]:
         """Проверка существования юзера"""
         return await self.collection.find_one({'name': self.name})
 
