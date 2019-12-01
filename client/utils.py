@@ -33,7 +33,6 @@ def input_date():
 		print('        ^^^^^^^')
 
 		year = input_year(today.year)
-		print(year)
 		if year is None:
 			break
 		month = input_mounth(today.month)

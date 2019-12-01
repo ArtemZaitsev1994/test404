@@ -6,8 +6,8 @@ from utils import on_cleanup, create_redis_pool, check_mess, check_feailed_mess
 from routes import routes
 
 
-MONGO_HOST = 'mongodb://127.0.0.1:27017'
-# MONGO_HOST = 'mongodb://mongodb:27017'
+# MONGO_HOST = 'mongodb://127.0.0.1:27017'
+MONGO_HOST = 'mongodb://mongodb:27017'
 MONGO_DB_NAME = '404'
 RETRIES_TIMES = 1
 

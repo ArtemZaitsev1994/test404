@@ -4,6 +4,7 @@ services:
         build: ./server/
         ports: 
           - 8080:8080
+        container_name: server
         depends_on:
           - mongodb
         environment:
@@ -15,8 +16,8 @@ services:
 
       messengers_server:
         build: ./messengers/
+        container_name: messengers_server
         command: python -u server.py
-        container_name: "messengers"
         ports:
           - 8081:8081
 

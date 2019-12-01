@@ -10,7 +10,7 @@ ADD . /app
 # Install any needed packages
 RUN pip install -r requirements.txt
 
-CMD python server.py
+CMD python -u server.py
 
 # Make port 8081 available to the world outside this container
 EXPOSE 8081

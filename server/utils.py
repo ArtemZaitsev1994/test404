@@ -40,8 +40,8 @@ async def check_mess(app):
 
 
 async def create_redis_pool(app):
-    app['redis'] = await aioredis.create_redis_pool('redis://localhost')
-    # app['redis'] = await aioredis.create_redis_pool('redis://redis')
+    # app['redis'] = await aioredis.create_redis_pool('redis://localhost')
+    app['redis'] = await aioredis.create_redis_pool('redis://redis')
 
 
 async def on_cleanup(app):
@@ -69,7 +69,7 @@ async def send_to_messanger(app, data, key):
                         break
             except ClientError as e:
                 print(repr(e))
-                await asyncio.sleep(3)
+                await asyncio.sleep(1)
         if not success:
             await app['redis'].srem('in_process', key)
             await app['redis'].sadd(f'user_{data["sender"]}', key)

@@ -126,7 +126,7 @@ async def send_mess(session):
         'message': message,
         'time': time
     }
-    print(f'Отправлен запрос для: {result_contact}')
+    print(f'Отправлен запрос для: {", ".join(result_contact)}.')
     return data
 
 

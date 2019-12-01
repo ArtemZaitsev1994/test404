@@ -9,11 +9,12 @@ ADD . /app
 
 # Install any needed packages
 RUN pip install -r requirements.txt
+RUN apt-get install curl
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait /wait
 RUN chmod +x /wait
 
-CMD /wait && python app.py
+CMD /wait && echo "Python App can be started"
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080

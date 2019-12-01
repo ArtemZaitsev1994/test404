@@ -3,15 +3,20 @@ import uuid
 from typing import Dict
 
 from aiohttp import web, ClientSession
+from aiohttp.web import middleware
 
+from schemas import SCHEMAS
 from models import User
 from utils import get_user, send_to_messanger
 
 
+# HOST = 'http://0.0.0.0:8081'
+HOST = 'http://messengers_server:8081'
+
 WEB_ADRESSES = {
-    'telegram': 'http://0.0.0.0:8081/telegram',
-    'whatsApp': 'http://0.0.0.0:8081/whatsapp',
-    'viber': 'http://0.0.0.0:8081/viber'
+    'telegram': f'{HOST}/telegram',
+    'whatsApp': f'{HOST}/whatsapp',
+    'viber': f'{HOST}/viber'
 }
 
 
