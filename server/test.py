@@ -12,7 +12,7 @@ from models import User
 MONGO_HOST = 'mongodb://127.0.0.1:27017'
 # MONGO_HOST = 'mongodb://mongodb:27017'
 MONGO_DB_NAME = '404test'
-RETRIES_TIMES = 1
+RETRIES_TIMES = 2
 
 
 async def create_user(app):
