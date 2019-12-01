@@ -1,7 +1,6 @@
 from aiohttp import web
 from motor import motor_asyncio as ma
 
-from views import Handler, Info
 from utils import on_cleanup, create_redis_pool, check_mess, check_feailed_mess
 from routes import routes
 

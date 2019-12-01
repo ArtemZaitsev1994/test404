@@ -4,6 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 COLLECTION = 'User'
 
+
 class User:
 
     def __init__(self, db: AsyncIOMotorDatabase, name: str):
@@ -11,7 +12,7 @@ class User:
         self.collection = self.db[COLLECTION]
         self.name = name
 
-    async def check_user(self) -> Dict[str, Any]:
+    async def check_user(self) -> Dict[str, str]:
         """Проверка существования юзера"""
         return await self.collection.find_one({'name': self.name})
 
@@ -22,7 +23,7 @@ class User:
             return user['contacts']
         return None
 
-    async def add_contact(self, contact: Dict) -> bool:
+    async def add_contact(self, contact: Dict[str, str]) -> bool:
         """
         Добавить контакт к пользователю
 
@@ -30,7 +31,7 @@ class User:
             contact - данные с идентификаторами в мессенджерах
         """
         result = await self.collection.find_one_and_update(
-            {'name': self.name },
+            {'name': self.name},
             {'$set': {f'contacts.{contact["name"]}': contact['messangers']}}
         )
         return result
@@ -38,7 +39,7 @@ class User:
     async def remove_contact(self, contact_name: str):
         """Удалить контакт из списка контактов"""
         result = await self.collection.find_one_and_update(
-            {'name': self.name },
+            {'name': self.name},
             {'$unset': {f'contacts.{contact_name}': ''}}
         )
         return result

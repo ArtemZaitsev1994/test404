@@ -10,6 +10,11 @@ from models import User
 
 def get_user(func):
     async def wrap(self):
+        """
+        Декоратор для вьюх, которые получают одни и те же данные.
+        data - данные из запроса.
+        user - экземпляр класса для работы с базой данных и коллекцией User.
+        """
         data = await self.request.json()
         user = User(self.request.app.db, data['user_name'])
         await user.create_user()
@@ -18,6 +23,10 @@ def get_user(func):
 
 
 async def check_feailed_mess(app):
+    """
+    Корутина, которая в фоне выполняет проверку на неотправленные
+    сообщения и пытается сделать это еще раз.
+    """
     async def send_feailed(app):
         while True:
             failed = await app['redis'].keys('user_*')
@@ -33,10 +42,15 @@ async def check_feailed_mess(app):
 
 
 async def check_mess(app):
-    _, keys = await app['redis'].sscan('in_process')
-    for key in keys:
+    """
+    Запускаем при старте приложения, для того, чтобы перекинуть все сообщения,
+    которые были в процессе отправки на момент аварийного отключения приложения,
+    на отправку еще раз.
+    """
+    for key in await app['redis'].spop('in_process'):
         data = json.loads((await app['redis'].get(key)).decode("utf-8"))
-    await app['redis'].delete('in_process')
+        app.loop.create_task(
+            send_to_messanger(app, data, key))
 
 
 async def create_redis_pool(app):
@@ -49,7 +63,11 @@ async def on_cleanup(app):
     await app['redis'].wait_closed()
 
 
-async def send_to_messanger(app, data, key):
+async def send_to_messanger(app, data: Dict, key: str):
+    """
+    Отправляет сообщения на сервер мессенджеров,
+    запускается в фоне.
+    """
     await app['redis'].sadd('in_process', key)
     if data['time'] is not None:
         delta = datetime.datetime(*data['time']) - datetime.datetime.now()

@@ -11,11 +11,11 @@ from utils import get_delay_time
 HOST = 'http://0.0.0.0:8080'
 ERROR_MESS = 'Что-то не так, попробуйте пингануть сервер или изменить запрос.'
 COMMANDS = '''
-	Добавить пользователя...............1
-	Отправить сообщение пользователю....2
-	Удалить пользователя................3
-	Проверить доставку сообщений........4
-	Выход...............................5
+    Добавить пользователя...............1
+    Отправить сообщение пользователю....2
+    Удалить пользователя................3
+    Проверить доставку сообщений........4
+    Выход...............................5
 '''
 SUCCESS_ANSWERS = {
     'post': 'Контакт был успешно создан.',
@@ -132,7 +132,11 @@ async def send_mess(session):
 
 async def get_contacts(session):
 
-    async with session.request('get', f'{HOST}/api/contacts', json={'user_name': user_name}) as req:
+    async with session.request(
+            'get',
+            f'{HOST}/api/contacts',
+            json={'user_name': user_name}
+    ) as req:
         contacts = {}
         print('--------------------ANSWER--------------------')
         if req.status == 200:
@@ -155,7 +159,11 @@ async def get_contacts(session):
 
 
 async def get_feiled_mess(session):
-    async with session.request('get', f'{HOST}/api/get_failed_mess', json={'user_name': user_name}) as req:
+    async with session.request(
+        'get',
+        f'{HOST}/api/get_failed_mess',
+        json={'user_name': user_name}
+    ) as req:
         if req.status == 200:
             data = json.loads(await req.text())
             if data['data']:
