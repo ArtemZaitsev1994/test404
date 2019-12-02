@@ -6,7 +6,7 @@ import aioredis
 from aiohttp import web
 from motor import motor_asyncio as ma
 
-from utils import send_to_messanger
+from utils import send_to_messenger
 from routes import routes
 from models import User
 
@@ -16,7 +16,7 @@ MONGO_DB_NAME = '404test'
 RETRIES_TIMES = 2  # количество повторов отправки сообщения при ошибке
 TEST_DATA = [{
     'name': 'Sasha',
-    'messangers' : {
+    'messengers' : {
         'telegram': 'Alexandrov',
         'whatsApp': '89926655332',
         'viber': 'viber_id',
@@ -25,7 +25,7 @@ TEST_DATA = [{
 },
 {
     'name': 'Ivan',
-    'messangers' : {
+    'messengers' : {
         'telegram': 'Ivanov',
         'whatsApp': '+79508465333',
         'viber': 'viber_id',
@@ -75,7 +75,7 @@ async def test_add_contact(cli):
         'user_name': 'Artem',
         'contact': {
             'name': 'Valera',
-            'messangers': {
+            'messengers': {
                 'telegram': 'Val',
                 'whatsApp': '',
                 'viber': '',
@@ -106,7 +106,6 @@ async def test_delete_contact(cli):
     assert resp.status == 200
     answer = json.loads(await resp.text())
     assert answer['success'] is True
-    contacts = await cli.app['user_db'].get_contacts()
     assert await User(cli.app.db, 'Artem').get_contacts() == {
         'Ivan' : {
             'telegram': 'Ivanov',
@@ -144,7 +143,7 @@ async def test_send_message_to_messengers(cli):
             t['url'] = adr
             key = str(uuid.uuid4())
             await cli.app['redis'].set(key, json.dumps(t))
-            await send_to_messanger(cli.app, t, key)
+            await send_to_messenger(cli.app, t, key)
     assert await cli.app['redis'].scard('user_Artem') == 2
     await cli.app['redis'].flushdb()    
 
@@ -168,6 +167,6 @@ async def test_send_delayed_message_to_messengers(cli):
     }
     key = str(uuid.uuid4())
     await cli.app['redis'].set(key, json.dumps(data))
-    await send_to_messanger(cli.app, data, key)
+    await send_to_messenger(cli.app, data, key)
     assert datetime.datetime.now() + datetime.timedelta(seconds=1) > planned_time
     await cli.app['redis'].flushdb()

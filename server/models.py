@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
@@ -8,6 +8,7 @@ COLLECTION = 'User'
 class User:
 
     def __init__(self, db: AsyncIOMotorDatabase, name: str):
+        """Класс описывающий пользователей в базе данных"""
         self.db = db
         self.collection = self.db[COLLECTION]
         self.name = name
@@ -23,7 +24,7 @@ class User:
             return user['contacts']
         return None
 
-    async def add_contact(self, contact: Dict[str, str]) -> bool:
+    async def add_contact(self, contact: Optional[List[Dict]]) -> bool:
         """
         Добавить контакт к пользователю
 
@@ -32,7 +33,7 @@ class User:
         """
         result = await self.collection.find_one_and_update(
             {'name': self.name},
-            {'$set': {f'contacts.{contact["name"]}': contact['messangers']}}
+            {'$set': {f'contacts.{contact["name"]}': contact['messengers']}}
         )
         return result
 

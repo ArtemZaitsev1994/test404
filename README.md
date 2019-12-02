@@ -11,7 +11,7 @@
 
 Имена пользователей и их контакты хранятся в базе данных MongoDB. Эта документоориентированная база данных удобна для хранения цельных объектов не имеющих реляционных отношений к другим объектам. Таким образом за один запрос мы достаем из базы всю нам нужную информацию в кратчайший срок. В иной бизнес-модели стоит пересмотреть выбор базы данных.
 
-Сами сообщения хранятся в Redis. Одна из самых быстрых in-memory баз данных обеспечит быстрый доступ к сообщениям. В целом, нам не нужно хранить сообщения, микросервис выполняет роль proxy-сервера, который просто пересылает сообщения на нужные нам мессенджеры. Но для обеспечения сохранения сообщений, помимо стандартных настроек бэкапа, была добавлена запись
+Сами сообщения хранятся в Redis. Одна из самых быстрых in-memory баз данных обеспечит эффективный доступ к сообщениям. В целом, нам не нужно хранить сообщения, микросервис выполняет роль proxy-сервера, который просто пересылает сообщения на нужные нам мессенджеры. Но для обеспечения сохранения сообщений, помимо стандартных настроек бэкапа, была добавлена запись в фаил настроек Redis (etc/redis/redis.conf):
 > slowlog-log-slower-than 0
 
 которая обеспечит логирование всех обращений к базе.
@@ -21,7 +21,7 @@
 ## Запуск приложения
 Приложение, Redis, MongoDB и фиктивный сервер разворачиваются в докере.
 Клонируйте репозиторий.
-> 
+> git clone https://github.com/ArtemZaitsev1994/test404.git
 
 Перейдите в папку с проектом.
 > cd test404
@@ -30,12 +30,13 @@
 > sudo docker-compose up --build -d
 
 Сервер будет доступен по `localhost:8080`
+Если развернуть проект не в режиме демона (флаг -d), то можно видеть как приходят сообщения на сервер.
 
 ## API
 ### Создание контакта:
 #### Curl пример
 ```
-curl --header "Content-Type: application/json" --request POST --data '{"user_name": "test", "contact": {"name": "Artem", "messangers": {"telegram": "ArtemZaitsev", "whatsApp": "+799200828615", "viber": ""}}, "name": "Artem"}' http://localhost:8080/api/contacts
+curl --header "Content-Type: application/json" --request POST --data '{"user_name": "test", "contact": {"name": "Artem", "messengers": {"telegram": "ArtemZaitsev", "whatsApp": "+799200828615", "viber": ""}}, "name": "Artem"}' http://localhost:8080/api/contacts
 ```
 #### URL
 `http://localhost:8080/api/contacts`
@@ -45,7 +46,7 @@ curl --header "Content-Type: application/json" --request POST --data '{"user_nam
   "user_name": str,
   "contact": {
     "name": str,
-    "messangers": {
+    "messengers": {
       "telegram": str,
       "whatsApp": str,
       "viber": str
@@ -55,9 +56,9 @@ curl --header "Content-Type: application/json" --request POST --data '{"user_nam
 ```
 * `user_name` - Имя, под которым выполняется запрос.
 * `contact.name` - имя контакта, который хотим добавить.
-* `contact.messangers.telegram` - ID в Telegram
-* `contact.messangers.whatsApp` - ID в WhatsApp
-* `contact.messangers.viber` - ID в Viber
+* `contact.messengers.telegram` - ID в Telegram
+* `contact.messengers.whatsApp` - ID в WhatsApp
+* `contact.messengers.viber` - ID в Viber
 
 #### Response
 ```

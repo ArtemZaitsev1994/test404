@@ -1,6 +1,4 @@
 import json
-import re
-from datetime import datetime
 
 import aiohttp
 import asyncio
@@ -62,12 +60,13 @@ async def main():
 
 @query_decor('post')
 async def add_user(session):
+    """Отправить запрос на добавление контакта."""
     name = input('Имя контакта (пустая строка для отмены): ')
     if not name:
         return
     contact = {
         'name': name,
-        'messangers':
+        'messengers':
         {
             'telegram': input('Ник или номер в Telegram (пустая строка для пропуска): '),
             'whatsApp': input('Номер в WhatsApp (пустая строка для пропуска): '),
@@ -80,6 +79,7 @@ async def add_user(session):
 
 @query_decor('delete')
 async def rm_user(session):
+    """Отправить запрос на удаление контакта."""
     contacts = await get_contacts(session)
     if contacts:
         contact = input('Выберите кого хотите удалить: ')
@@ -90,6 +90,7 @@ async def rm_user(session):
 
 @query_decor('put')
 async def send_mess(session):
+    """Отправить сообщение в мессенджеры."""
     contacts = await get_contacts(session)
     if not contacts:
         return
@@ -131,7 +132,7 @@ async def send_mess(session):
 
 
 async def get_contacts(session):
-
+    """GET запрос на получение контактов у пользователя."""
     async with session.request(
             'get',
             f'{HOST}/api/contacts',
@@ -146,10 +147,10 @@ async def get_contacts(session):
             for name, data in res_data['contacts'].items():
                 print(f'{name}:\n')
                 no_messengers = True
-                for messanger, value in data.items():
+                for messenger, value in data.items():
                     if value:
                         no_messengers = False
-                        print(f'\t{messanger} - {value}')
+                        print(f'\t{messenger} - {value}')
                 if no_messengers:
                     print('\tУ контакта не заданы мессенджеры')
         else:
@@ -158,7 +159,8 @@ async def get_contacts(session):
         return contacts
 
 
-async def get_feiled_mess(session):
+async def get_failed_mess(session):
+    """GET запрос на получение сообщений с ошибкой отправки."""
     async with session.request(
         'get',
         f'{HOST}/api/get_failed_mess',
@@ -182,7 +184,7 @@ if __name__ == '__main__':
         '1': add_user,
         '2': send_mess,
         '3': rm_user,
-        '4': get_feiled_mess,
+        '4': get_failed_mess,
         '5': quit,
     }
     user_name = input('Введите свой ник: ')

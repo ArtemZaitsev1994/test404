@@ -35,7 +35,7 @@ async def check_feailed_mess(app):
                 for key in keys:
                     m = await app['redis'].get(key)
                     app.loop.create_task(
-                        send_to_messanger(app, json.loads(m), key))
+                        send_to_messenger(app, json.loads(m), key))
             await asyncio.sleep(10)
 
     app.loop.create_task(send_feailed(app))
@@ -50,20 +50,22 @@ async def check_mess(app):
     for key in await app['redis'].spop('in_process'):
         data = json.loads((await app['redis'].get(key)).decode("utf-8"))
         app.loop.create_task(
-            send_to_messanger(app, data, key))
+            send_to_messenger(app, data, key))
 
 
 async def create_redis_pool(app):
+    """Создание пула соединений с Redis"""
     # app['redis'] = await aioredis.create_redis_pool('redis://localhost')
     app['redis'] = await aioredis.create_redis_pool('redis://redis')
 
 
 async def on_cleanup(app):
+    """Закрытие соединений с Redis"""
     app['redis'].close()
     await app['redis'].wait_closed()
 
 
-async def send_to_messanger(app, data: Dict, key: str):
+async def send_to_messenger(app, data: Dict, key: str):
     """
     Отправляет сообщения на сервер мессенджеров,
     запускается в фоне.

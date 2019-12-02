@@ -12,6 +12,7 @@ INPUT_MESSAGE = """
 
 
 def get_delay_time():
+    """Функция для ввода времени отложенного сообщения."""
     time = []
     while True:
         time_input = input(INPUT_MESSAGE)
@@ -26,6 +27,7 @@ def get_delay_time():
 
 
 def input_date():
+    """Ввод точной даты, когда нужно отправить сообщение."""
     while True:
         today = datetime.datetime.now()
         print('        _______')
@@ -74,6 +76,7 @@ def input_year(year_now):
 
 
 def input_mounth(month_now):
+    """Ввод месяца и проверка на число."""
     while True:
         month = input('Месяц (по умолчанию - текущий): ') or month_now
         if month == 'выход':
@@ -88,14 +91,15 @@ def input_mounth(month_now):
 
 
 def input_day(year, month, day_now):
+    """Ввод дня и проверка на число."""
     while True:
         day = input('День (по умолчанию - текущий): ') or day_now
         if day == 'выход':
             return None
         try:
             if int(day) not in range(
-                day_now,
-                calendar.monthrange(year, month)[1]
+                    day_now,
+                    calendar.monthrange(year, month)[1]
             ):
                 raise ValueError
         except ValueError:
@@ -105,6 +109,7 @@ def input_day(year, month, day_now):
 
 
 def input_hour(default):
+    """Ввод часа и проверка на число."""
     while True:
         hour = input(f'Час (по умолчанию - {default}): ') or default
         if hour == 'выход':
@@ -119,6 +124,7 @@ def input_hour(default):
 
 
 def input_minute(default):
+    """Ввод минут и проверка на число."""
     while True:
         minute = input(f'Минута (по умолчанию - {default}): ') or default
         if minute == 'выход':
@@ -133,6 +139,7 @@ def input_minute(default):
 
 
 def input_seconds(default):
+    """Ввод секунд и проверка на число."""
     while True:
         second = input(f'Секунда (по умолчанию - {default}): ') or default
         if second == 'выход':
@@ -147,6 +154,7 @@ def input_seconds(default):
 
 
 def format_delay_time(text):
+    """Ввод количества времени, которое нужно подождать перед отправкой."""
     delay_for = re.findall(r'^([0-9]*):?([0-9]*):?([0-9]*)$', text)
     if delay_for:
         delay_for = list(delay_for[0])
