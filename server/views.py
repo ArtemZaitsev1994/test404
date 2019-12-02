@@ -83,7 +83,8 @@ class Handler(web.View):
 
 
 class Info(web.View):
-    async def get(self):
+    @get_user
+    async def get(self, user: User, data: Dict[str, str]):
         """Получение сообщений, которые не удалось отправить."""
         _, failed_mess = await self.request.app['redis'].sscan(f'user_{user.name}')
         failed = [json.loads((await self.request.app['redis'].get(x)).decode('utf-8'))
