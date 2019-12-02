@@ -6,17 +6,14 @@ from aiohttp import web, ClientSession
 
 from models import User
 from utils import get_user, send_to_messenger
-from settings import WEB_ADRESSES
+from settings import MESSENGER_HOST
 
 
-# HOST = 'http://0.0.0.0:8081'
-# HOST = 'http://messengers_server:8081'
-
-# WEB_ADRESSES = {
-#     'telegram': f'{HOST}/telegram',
-#     'whatsApp': f'{HOST}/whatsapp',
-#     'viber': f'{HOST}/viber'
-# }
+WEB_ADRESSES = {
+    'telegram': f'{MESSENGER_HOST}/telegram',
+    'whatsApp': f'{MESSENGER_HOST}/whatsapp',
+    'viber': f'{MESSENGER_HOST}/viber'
+}
 
 
 class Handler(web.View):
@@ -40,8 +37,18 @@ class Handler(web.View):
         Вьюха создает задачу в фоне.
         """
         contact = await user.check_user()
-        success = True
+        answer = {
+            'success': True,
+            'wrong_contacts': []
+        }
         for c in data['contacts']:
+            if c not in contact['contacts']:
+                answer['wrong_contacts'].append({
+                    'name': c,
+                    'error': 'no contact in base'
+                })
+                answer['success'] = False
+                continue
             addressee = contact['contacts'][c]
             for messenger, value in addressee.items():
                 if value:
@@ -56,14 +63,17 @@ class Handler(web.View):
                     try:
                         await self.request.app['redis'].set(key, json.dumps(redis_data))
                     except Exception as e:
-                        # TODO
                         print('Published failed', e)
-                        success = False
+                        answer['wrong_contacts'].append({
+                            'name': c,
+                            'error': f'Error on the server side while sending to {messenger}'
+                        })
+                        answer['success'] = False
                     else:
                         # Здесь создаем задачу в фоне
                         self.request.app.loop.create_task(
                             send_to_messenger(self.request.app, redis_data, key))
-        return web.json_response({'success': success})
+        return web.json_response(answer)
 
     @get_user
     async def delete(self, user: User, data: Dict[str, str]):

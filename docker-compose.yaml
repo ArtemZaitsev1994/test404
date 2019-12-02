@@ -9,6 +9,8 @@ services:
           - mongodb
         environment:
           WAIT_HOSTS: redis:6379, mongodb:27017
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
         depends_on:
           - redis
           - mongodb
@@ -36,5 +38,8 @@ services:
       redis:
         image: redis:latest
         container_name: "redis"
+        volumes:
+          - ./redis/volumes:/var/lib/redis
+          - ./redis/redis.conf:/etc/redis/redis.conf
         ports:
           - 6379:6379

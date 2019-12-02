@@ -39,7 +39,7 @@ async def create_redis_pool(app):
 
 
 async def on_cleanup(app):
-    await cli.app['redis'].flushdb()    
+    await app['redis'].flushdb()    
     app['redis'].close()
     await app['redis'].wait_closed()
 

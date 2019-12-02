@@ -6,11 +6,6 @@ from routes import routes
 from settings import RETRIES_TIMES, MONGO_HOST, MONGO_DB_NAME
 
 
-# MONGO_HOST = 'mongodb://127.0.0.1:27017'
-# MONGO_HOST = 'mongodb://mongodb:27017'
-# MONGO_DB_NAME = '404'
-# RETRIES_TIMES = 1
-
 app = web.Application()
 for route in routes:
     app.router.add_route(*route)

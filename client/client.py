@@ -37,11 +37,16 @@ def query_decor(method):
             if data is None:
                 return
             async with session.request(method, LINK, json=data) as req:
+                data = json.loads(await req.text())
                 print('--------------------ANSWER--------------------')
-                if req.status == 200 and json.loads(await req.text())['success']:
+                if req.status == 200 and data['success']:
                     print(SUCCESS_ANSWERS[method])
                 else:
                     print(FAIL_ANSWERS[method])
+                    if data.get('wrong_contacts'):
+                        for contact in data['wrong_contacts']:
+                            print(f'Контакт: {contact['name']}')
+                            print(f'Ошибка: {contact['error']}')
                 print('----------------------------------------------')
         return wrap_func
     return wrap

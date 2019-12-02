@@ -1,11 +1,13 @@
 import json
 import datetime
+from typing import Dict
 
 import aioredis
 import asyncio
 from aiohttp import ClientSession, ClientError
 
 from models import User
+from settings import REDIS_HOST, WAIT_BETWEEN_REQUESTS
 
 
 def get_user(func):
@@ -47,16 +49,20 @@ async def check_mess(app):
     которые были в процессе отправки на момент аварийного отключения приложения,
     на отправку еще раз.
     """
-    for key in await app['redis'].spop('in_process'):
-        data = json.loads((await app['redis'].get(key)).decode("utf-8"))
-        app.loop.create_task(
-            send_to_messenger(app, data, key))
+    if await app['redis'].exists('in_process'):
+        for key in await app['redis'].spop('in_process'):
+            if not await app['redis'].exists(key):
+                continue
+            data = json.loads((await app['redis'].get(key)).decode("utf-8"))
+            app.loop.create_task(
+                send_to_messenger(app, data, key))
 
 
 async def create_redis_pool(app):
     """Создание пула соединений с Redis"""
     # app['redis'] = await aioredis.create_redis_pool('redis://localhost')
-    app['redis'] = await aioredis.create_redis_pool('redis://redis')
+    # app['redis'] = await aioredis.create_redis_pool('redis://redis')
+    app['redis'] = await aioredis.create_redis_pool(REDIS_HOST)
 
 
 async def on_cleanup(app):
@@ -89,7 +95,7 @@ async def send_to_messenger(app, data: Dict, key: str):
                         break
             except ClientError as e:
                 print(repr(e))
-                await asyncio.sleep(1)
+                await asyncio.sleep(WAIT_BETWEEN_REQUESTS)
         if not success:
             await app['redis'].srem('in_process', key)
             await app['redis'].sadd(f'user_{data["sender"]}', key)
